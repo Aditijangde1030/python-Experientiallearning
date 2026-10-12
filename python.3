@@ -1,0 +1,153 @@
+import math
+
+
+def show_menu():
+  """Displays the main calculator menu."""
+  print("\n==============================")
+  print("      SCIENTIFIC CALCULATOR     ")
+  print("==============================")
+  print("1. Basic Arithmetic (+, -, *, /, ^)")
+  print("2. Square Root (sqrt)")
+  print("3. Trigonometry (sin, cos, tan)")
+  print("4. Logarithm (ln, log10)")
+  print("5. Factorial (!)")
+  print("6. Evaluate Custom Expression")
+  print("7. Exit")
+  print("------------------------------")
+
+
+def scientific_calculator():
+  while True:
+    show_menu()
+    choice = input("Select an option (1-7): ").strip()
+
+    # 1. Basic Arithmetic
+    if choice == "1":
+      print("\n--- Basic Arithmetic ---")
+      try:
+        num1 = float(input("Enter first number: "))
+        op = input("Enter operator (+, -, *, /, ^): ").strip()
+        num2 = float(input("Enter second number: "))
+
+        if op == "+":
+          result = num1 + num2
+        elif op == "-":
+          result = num1 - num2
+        elif op == "*":
+          result = num1 * num2
+        elif op == "/":
+          if num2 == 0:
+            print("Error: Division by zero is not allowed.")
+            continue
+          result = num1 / num2
+        elif op == "^":
+          result = num1**num2
+        else:
+          print("Error: Invalid operator selected.")
+          continue
+        print(f"Result: {num1} {op} {num2} = {result}")
+      except ValueError:
+        print("Error: Please enter valid numerical inputs.")
+
+    # 2. Square Root
+    elif choice == "2":
+      print("\n--- Square Root ---")
+      try:
+        num = float(input("Enter a number: "))
+        if num < 0:
+          print(
+              "Error: Cannot calculate the square root of a negative number."
+          )
+          continue
+        result = math.sqrt(num)
+        print(f"Result: sqrt({num}) = {result}")
+      except ValueError:
+        print("Error: Please enter a valid number.")
+
+    # 3. Trigonometry
+    elif choice == "3":
+      print("\n--- Trigonometry ---")
+      func = input("Enter function (sin, cos, tan): ").strip().lower()
+      try:
+        angle_deg = float(input("Enter angle in degrees: "))
+        angle_rad = math.radians(angle_deg)
+
+        if func == "sin":
+          result = math.sin(angle_rad)
+        elif func == "cos":
+          result = math.cos(angle_rad)
+        elif func == "tan":
+          result = math.tan(angle_rad)
+        else:
+          print("Error: Invalid trigonometric function.")
+          continue
+        print(f"Result: {func}({angle_deg}°) = {result}")
+      except ValueError:
+        print("Error: Please enter a valid numerical angle.")
+
+    # 4. Logarithm
+    elif choice == "4":
+      print("\n--- Logarithm ---")
+      log_type = input("Choose type (ln for natural log, log10): ").strip().lower()
+      try:
+        num = float(input("Enter a positive number: "))
+        if num <= 0:
+          print("Error: Logarithm is undefined for zero or negative numbers.")
+          continue
+        if log_type == "ln":
+          result = math.log(num)
+          print(f"Result: ln({num}) = {result}")
+        elif log_type == "log10":
+          result = math.log10(num)
+          print(f"Result: log10({num}) = {result}")
+        else:
+          print("Error: Invalid logarithm type.")
+      except ValueError:
+        print("Error: Please enter a valid number.")
+
+    # 5. Factorial
+    elif choice == "5":
+      print("\n--- Factorial ---")
+      try:
+        num = int(input("Enter a non-negative integer: "))
+        if num < 0:
+          print("Error: Factorial is not defined for negative numbers.")
+          continue
+        result = math.factorial(num)
+        print(f"Result: {num}! = {result}")
+      except ValueError:
+        print("Error: Please enter a valid whole number.")
+
+    # 6. Expression Evaluation
+    elif choice == "6":
+      print("\n--- Evaluate Expression ---")
+      print("Tip: You can use operators (+, -, , /, *, math functions like sqrt, sin, pi)")
+      print("Example: 2 * (3 + 5) ** 2 or sqrt(16) + pi")
+      expression = input("Enter expression: ")
+      try:
+        # Safe evaluation dictionary allowing specific math functions and constants
+        allowed_scope = {
+            "sin": math.sin,
+            "cos": math.cos,
+            "tan": math.tan,
+            "sqrt": math.sqrt,
+            "log": math.log,
+            "log10": math.log10,
+            "pi": math.pi,
+            "e": math.e,
+        }
+        result = eval(expression, {"_builtins_": {}}, allowed_scope)
+        print(f"Result: {result}")
+      except Exception as e:
+        print(f"Error evaluating expression: {e}")
+
+    # 7. Exit
+    elif choice == "7":
+      print("\nThank you for using the Scientific Calculator. Goodbye!")
+      break
+    else:
+      print("Error: Invalid selection. Please choose an option between 1 and 7.")
+
+
+if _name_ == "_main_":
+  scientific_calculator()
