@@ -1,0 +1,373 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scientific Calculator</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #eef2f7;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px #bbb;
+        }
+
+        h1 {
+            color: #234a84;
+        }
+
+        select, input {
+            width: 90%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #aaa;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px 18px;
+            margin: 8px;
+            background: #234a84;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #152f59;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e5f4e8;
+            border-radius: 6px;
+            overflow-wrap: anywhere;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .field {
+            margin-top: 12px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>Scientific Calculator</h1>
+
+    <label for="choice">Select Operation:</label>
+    <select id="choice" onchange="showFields()">
+        <option value="1">1. Basic Arithmetic</option>
+        <option value="2">2. Square Root</option>
+        <option value="3">3. Trigonometry</option>
+        <option value="4">4. Logarithm</option>
+        <option value="5">5. Factorial</option>
+        <option value="6">6. Custom Expression</option>
+        <option value="7">7. Exit</option>
+    </select>
+
+    <div id="fields"></div>
+
+    <button id="calculateBtn" onclick="calculate()">Calculate</button>
+    <button onclick="clearCalculator()">Clear</button>
+
+    <div id="result" class="hidden"></div>
+</div>
+
+<script>
+function showFields() {
+    const choice = document.getElementById("choice").value;
+    const fields = document.getElementById("fields");
+    const result = document.getElementById("result");
+    const button = document.getElementById("calculateBtn");
+
+    result.classList.add("hidden");
+
+    if (choice === "7") {
+        fields.innerHTML = "<p>Thank you for using the calculator!</p>";
+        button.style.display = "none";
+        return;
+    }
+
+    button.style.display = "inline-block";
+
+    if (choice === "1") {
+        fields.innerHTML = `
+            <div class="field">
+                <input type="number" id="a" placeholder="First number" step="any">
+                <select id="operator">
+                    <option value="+">Addition (+)</option>
+                    <option value="-">Subtraction (-)</option>
+                    <option value="*">Multiplication (*)</option>
+                    <option value="/">Division (/)</option>
+                    <option value="^">Power (^)</option>
+                </select>
+                <input type="number" id="b" placeholder="Second number" step="any">
+            </div>`;
+    } else if (choice === "2") {
+        fields.innerHTML = `
+            <input type="number" id="n" placeholder="Enter number" step="any">`;
+    } else if (choice === "3") {
+        fields.innerHTML = `
+            <select id="trig">
+                <option value="sin">sin</option>
+                <option value="cos">cos</option>
+                <option value="tan">tan</option>
+            </select>
+            <input type="number" id="angle" placeholder="Angle in degrees" step="any">`;
+    } else if (choice === "4") {
+        fields.innerHTML = `
+            <input type="number" id="n" placeholder="Enter positive number" step="any">
+            <select id="logType">
+                <option value="1">Natural Log (ln)</option>
+                <option value="2">Log Base 10</option>
+            </select>`;
+    } else if (choice === "5") {
+        fields.innerHTML = `
+            <input type="number" id="n" placeholder="Non-negative integer" step="1" min="0">`;
+    } else if (choice === "6") {
+        fields.innerHTML = `
+            <input type="text" id="expression" placeholder="Example: 2 + 3 * 4">`;
+    }
+}
+
+function calculate() {
+    const choice = document.getElementById("choice").value;
+    const result = document.getElementById("result");
+
+    try {
+        let r;
+
+        if (choice === "1") {
+            const a = Number(document.getElementById("a").value);
+            const b = Number(document.getElementById("b").value);
+            const op = document.getElementById("operator").value;
+
+            if (document.getElementById("a").value === "" ||
+                document.getElementById("b").value === "") {
+                throw new Error("Please enter both numbers.");
+            }
+
+            if (op === "+") r = a + b;
+            else if (op === "-") r = a - b;
+            else if (op === "*") r = a * b;
+            else if (op === "/") {
+                if (b === 0) throw new Error("Cannot divide by zero.");
+                r = a / b;
+            }
+            else if (op === "^") r = Math.pow(a, b);
+
+        } else if (choice === "2") {
+            const n = getNumber("n");
+
+            if (n < 0) throw new Error("Square root requires a non-negative number.");
+
+            r = Math.sqrt(n);
+
+        } else if (choice === "3") {
+            const f = document.getElementById("trig").value;
+            const angle = getNumber("angle");
+            const radians = angle * Math.PI / 180;
+
+            if (f === "sin") r = Math.sin(radians);
+            else if (f === "cos") r = Math.cos(radians);
+            else if (f === "tan") {
+                if (Math.abs(Math.cos(radians)) < 1e-12) {
+                    throw new Error("Tangent is undefined for this angle.");
+                }
+                r = Math.tan(radians);
+            }
+
+        } else if (choice === "4") {
+            const n = getNumber("n");
+
+            if (n <= 0) throw new Error("Enter a positive number.");
+
+            const t = document.getElementById("logType").value;
+            r = t === "1" ? Math.log(n) : Math.log10(n);
+
+        } else if (choice === "5") {
+            const input = document.getElementById("n").value;
+
+            if (input === "") throw new Error("Please enter a number.");
+
+            const n = Number(input);
+
+            if (!Number.isSafeInteger(n) || n < 0) {
+                throw new Error("Enter a non-negative safe integer.");
+            }
+
+            if (n > 170) {
+                throw new Error("Number is too large for a finite JavaScript result.");
+            }
+
+            r = 1;
+            for (let i = 2; i <= n; i++) {
+                r *= i;
+            }
+
+        } else if (choice === "6") {
+            const expression = document.getElementById("expression").value.trim();
+
+            if (!expression) throw new Error("Please enter an expression.");
+
+            r = evaluateExpression(expression);
+        }
+
+        if (typeof r === "number" && !Number.isFinite(r)) {
+            throw new Error("Result is outside the supported numeric range.");
+        }
+
+        result.textContent = "Result: " + r;
+        result.classList.remove("hidden");
+
+    } catch (e) {
+        result.textContent = "Error: " + e.message;
+        result.classList.remove("hidden");
+    }
+}
+
+function getNumber(id) {
+    const value = document.getElementById(id).value;
+
+    if (value.trim() === "") {
+        throw new Error("Please enter a number.");
+    }
+
+    const n = Number(value);
+
+    if (!Number.isFinite(n)) {
+        throw new Error("Enter a valid number.");
+    }
+
+    return n;
+}
+
+// Safely evaluate arithmetic expressions without using eval().
+function evaluateExpression(expression) {
+    const tokens = expression.match(
+        /\d*\.?\d+(?:e[+-]?\d+)?|[()+\-*/^]/gi
+    );
+
+    if (!tokens || tokens.join("") !== expression.replace(/\s+/g, "")) {
+        throw new Error("Use numbers and operators +, -, *, /, ^, and parentheses only.");
+    }
+
+    let pos = 0;
+
+    function primary() {
+        const token = tokens[pos++];
+
+        if (token === "(") {
+            const value = addSub();
+            if (tokens[pos++] !== ")") {
+                throw new Error("Missing closing parenthesis.");
+            }
+            return value;
+        }
+
+        if (token === "+") return primary();
+        if (token === "-") return -primary();
+
+        const n = Number(token);
+        if (!Number.isFinite(n)) throw new Error("Invalid number.");
+        return n;
+    }
+
+    function power() {
+        let left = primary();
+
+        if (tokens[pos] === "^") {
+            pos++;
+            left = Math.pow(left, unary());
+        }
+
+        return left;
+    }
+
+    function unary() {
+        if (tokens[pos] === "+") {
+            pos++;
+            return unary();
+        }
+
+        if (tokens[pos] === "-") {
+            pos++;
+            return -unary();
+        }
+
+        return power();
+    }
+
+    function multiplyDivide() {
+        let value = unary();
+
+        while (tokens[pos] === "*" || tokens[pos] === "/") {
+            const op = tokens[pos++];
+            const right = unary();
+
+            if (op === "/" && right === 0) {
+                throw new Error("Cannot divide by zero.");
+            }
+
+            value = op === "*" ? value * right : value / right;
+        }
+
+        return value;
+    }
+
+    function addSub() {
+        let value = multiplyDivide();
+
+        while (tokens[pos] === "+" || tokens[pos] === "-") {
+            const op = tokens[pos++];
+            const right = multiplyDivide();
+            value = op === "+" ? value + right : value - right;
+        }
+
+        return value;
+    }
+
+    const answer = addSub();
+
+    if (pos !== tokens.length) {
+        throw new Error("Invalid expression.");
+    }
+
+    if (!Number.isFinite(answer)) {
+        throw new Error("Result is outside the supported numeric range.");
+    }
+
+    return answer;
+}
+
+function clearCalculator() {
+    document.getElementById("result").classList.add("hidden");
+    showFields();
+    document.getElementById("fields").querySelectorAll("input")
+        .forEach(input => input.value = "");
+}
+
+showFields();
+</script>
+
+</body>
+</html>
