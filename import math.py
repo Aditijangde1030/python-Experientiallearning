@@ -1,0 +1,62 @@
+import math
+
+while True:
+    print("\nSCIENTIFIC CALCULATOR")
+    print("1. Basic Arithmetic")
+    print("2. Square Root")
+    print("3. Trigonometry")
+    print("4. Logarithm")
+    print("5. Factorial")
+    print("6. Custom Expression")
+    print("7. Exit")
+
+    ch = input("Enter choice: ")
+
+    try:
+        if ch == "1":
+            a = float(input("Enter first number: "))
+            op = input("Enter operator (+,-,*,/,^): ")
+            b = float(input("Enter second number: "))
+            if op == "+": r = a + b
+            elif op == "-": r = a - b
+            elif op == "*": r = a * b
+            elif op == "/": r = a / b
+            elif op == "^": r = a ** b
+            else: r = "Invalid operator"
+            print("Result:", r)
+
+        elif ch == "2":
+            n = float(input("Enter number: "))
+            print("Result:", math.sqrt(n))
+
+        elif ch == "3":
+            f = input("Enter sin, cos or tan: ").lower()
+            a = math.radians(float(input("Enter angle: ")))
+            print("Result:", getattr(math, f)(a))
+
+        elif ch == "4":
+            n = float(input("Enter positive number: "))
+            print("1. Natural log  2. Log10")
+            t = input("Choose: ")
+            print("Result:", math.log(n) if t == "1"
+                  else math.log10(n))
+
+        elif ch == "5":
+            n = int(input("Enter non-negative integer: "))
+            print("Result:", math.factorial(n))
+
+        elif ch == "6":
+            print("Use basic math expressions only.")
+            print("Example: 2 + 3 * 4")
+            e = input("Enter expression: ")
+            print("Result:", eval(e, {"__builtins__": {}}))
+
+        elif ch == "7":
+            print("Thank you for using the calculator!")
+            break
+
+        else:
+            print("Invalid choice")
+
+    except Exception as e:
+        print("Error:", e)
